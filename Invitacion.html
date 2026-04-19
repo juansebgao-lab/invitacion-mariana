@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los 15 de Mariana - Rapunzel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Ibarra+Real+Nova:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@500;700&display=swap');
+
+        body {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('fondo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: 'Ibarra Real Nova', serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 0;
+            overflow: hidden;
+        }
+
+        /* --- SOBRE --- */
+        #pantalla-sobre {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #2e1a47;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; cursor: pointer;
+        }
+
+        .sobre-contenedor {
+            position: relative; width: 300px; height: 200px;
+            background-color: #5e35b1; border-radius: 0 0 10px 10px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6); perspective: 1000px;
+        }
+
+        .tapa {
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            border-top: 120px solid #4527a0; transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3;
+        }
+
+        .sello {
+            position: absolute; top: 85px; left: 50%; transform: translateX(-50%);
+            width: 75px; height: 75px; background-color: #ffca28; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: #4527a0; font-size: 2.8rem; box-shadow: 0 0 30px rgba(255, 202, 40, 0.8);
+            z-index: 4; border: 2px solid #fff;
+        }
+
+        .abrir-tapa { transform: rotateX(180deg); z-index: 1; }
+
+        /* --- EFECTO DE HUMO MÁGICO --- */
+        #humo-magico {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px; height: 10px;
+            z-index: 1100; pointer-events: none;
+        }
+
+        .particula-humo {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,202,40,0.4) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(15px);
+            opacity: 0;
+        }
+
+        @keyframes estallidoHumo {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(4); opacity: 0; }
+        }
+
+        /* --- TARJETA --- */
+        .invitacion {
+            display: none; background: rgba(255, 255, 255, 0.94);
+            width: 90%; max-width: 480px; padding: 40px 25px; border-radius: 30px;
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border: 4px double #ffca28; opacity: 0; transform: translateY(40px);
+            transition: all 1.5s ease; margin: auto; backdrop-filter: blur(5px);
+        }
+
+        .invitacion.visible { display: block; opacity: 1; transform: translateY(0); }
+
+        h1 { font-family: 'Great Vibes', cursive; color: #7b1fa2; font-size: 5.5rem; margin: 10px 0; text-shadow: 1px 1px 1px #ffca28; }
+        .padres { font-size: 1.4rem; color: #4a148c; font-weight: 600; margin-bottom: 5px; }
+        .frase-invitacion { font-size: 1.1rem; color: #7b1fa2; font-style: italic; margin-bottom: 10px; line-height: 1.2; }
+
+        /* --- GALERÍA 9 FOTOS --- */
+        .carrusel-contenedor {
+            position: relative; width: 100%; max-width: 400px;
+            margin: 25px auto; overflow: hidden; border-radius: 20px;
+            border: 3px solid #ffca28; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: #eee;
+        }
+
+        .carrusel-fotos { display: flex; transition: transform 0.5s ease-in-out; }
+        .carrusel-fotos img { width: 100%; height: 450px; object-fit: cover; flex-shrink: 0; }
+
+        .carrusel-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(74, 20, 140, 0.7); color: #ffca28;
+            border: none; font-size: 1.5rem; padding: 12px;
+            cursor: pointer; border-radius: 50%; z-index: 10;
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        .contador-fotos {
+            position: absolute; bottom: 10px; right: 20px;
+            background: rgba(0,0,0,0.5); color: white;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;
+        }
+
+        .dedicatoria { font-size: 1.05rem; color: #4a148c; line-height: 1.6; margin: 25px 0; font-style: italic; text-align: justify; padding: 0 10px;}
+        
+        /* --- ESTILOS SECCIONES --- */
+        .seccion-titulo { font-weight: 700; color: #4a148c; margin-top: 25px; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
+        
+        .vestimenta-contenedor { display: flex; justify-content: space-around; margin: 10px 0 5px 0; }
+        .vestimenta-item { width: 45%; }
+        .vestimenta-item img { width: 45px; height: 45px; margin-bottom: 5px; object-fit: contain; }
+        .vestimenta-item p { font-size: 0.95rem; color: #7b1fa2; margin: 0; font-weight: 600; }
+
+        /* --- RESERVA COLOR --- */
+        .reserva-color { font-size: 1.5rem; color: #4a148c; font-weight: 700; margin: 20px 0; letter-spacing: 1.5px; line-height: 1.2; }
+
+        /* --- LLUVIA DE SOBRES --- */
+        .sobres-contenedor { margin: 5px 0 25px 0; }
+        .sobres-contenedor img { width: 50px; height: 50px; margin-bottom: 5px; object-fit: contain; }
+
+        .direccion-caja { background: rgba(243, 229, 245, 0.7); padding: 20px; border-radius: 15px; border: 1px solid #ffca28; color: #4a148c; font-size: 1.2rem; }
+        .boton { display: flex; align-items: center; justify-content: center; gap: 10px; color: white; text-decoration: none; padding: 16px; margin: 12px auto; border-radius: 50px; width: 85%; font-weight: 700; font-family: 'Montserrat', sans-serif; text-transform: uppercase; font-size: 0.85rem; }
+        .boton-gmaps { background-color: #6a1b9a; }
+        .boton-waze { background-color: #8e24aa; }
+        .boton-ws { background-color: #25d366; }
+        
+        .instruccion { margin-top: 40px; color: #ffca28; letter-spacing: 3px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="musica" src="cancion.mp3" loop></audio>
+    <div id="humo-magico"></div>
+
+    <div id="pantalla-sobre" onclick="iniciarApertura()">
+        <div class="sobre-contenedor">
+            <div class="tapa" id="tapa-sobre"></div>
+            <div class="sello" id="sello-sobre">☀️</div>
+        </div>
+        <p class="instruccion">Toca para abrir la magia</p>
+    </div>
+
+    <div class="invitacion" id="invitacion-card">
+        <div class="padres">Jhonatan Garcia y Alejandra Bejarano</div>
+        <div class="frase-invitacion">Tienen el gusto de invitarlos a celebrar los quince años de su hermosa hija</div>
+        
+        <h1>Mariana</h1>
+
+        <div class="carrusel-contenedor">
+            <button class="carrusel-btn prev" onclick="moverCarrusel(-1)">❮</button>
+            <div class="carrusel-fotos" id="carruselFotos">
+                <img src="foto1.jpg">
+                <img src="foto2.jpg">
+                <img src="foto3.jpg">
+                <img src="foto4.jpg">
+                <img src="foto5.jpg">
+                <img src="foto6.jpg">
+                <img src="foto7.jpg">
+                <img src="foto8.jpg">
+                <img src="foto9.jpg">
+            </div>
+            <button class="carrusel-btn next" onclick="moverCarrusel(1)">❯</button>
+            <div class="contador-fotos" id="contador">1 / 9</div>
+        </div>
+
+        <div class="dedicatoria">
+            "Hoy celebramos tus quince años, hija querida, y no podemos evitar mirar atrás y recordar cada paso de tu infancia, cada sonrisa y cada sueño que has ido construyendo. Nos llena de orgullo la mujer en la que te estás convirtiendo: fuerte, valiente y llena de luz. <br><br>
+            Que esta nueva etapa esté llena de oportunidades, aprendizajes y momentos que te hagan feliz. Nunca olvides cuánto te amamos y que siempre estaremos a tu lado, acompañando cada uno de tus sueños."
+        </div>
+
+        <div class="seccion-titulo">CÓDIGO DE VESTIMENTA</div>
+        <div class="vestimenta-contenedor">
+            <div class="vestimenta-item">
+                <img src="hombre.png" alt="Elegantes">
+                <p>Ellos elegantes</p>
+            </div>
+            <div class="vestimenta-item">
+                <img src="mujer.png" alt="Divinas">
+                <p>Ellas divinas</p>
+            </div>
+        </div>
+
+        <div class="reserva-color">SE RESERVA EL COLOR LILA</div>
+
+        <div class="seccion-titulo">LLUVIA DE SOBRES</div>
+        <div class="sobres-contenedor">
+            <img src="sobres.png" alt="Lluvia de Sobres">
+        </div>
+
+        <div class="detalles">
+            <p><strong>SÁBADO 23 DE MAYO, 2026</strong><br>RECEPCIÓN: 7:00 PM</p>
+            <div class="direccion-caja">
+                <strong>Salón Comunal San Pablo</strong><br>
+                Carrera 122 # 17 F - 65<br>
+                Fontibón, Bogotá
+            </div>
+        </div>
+
+        <a href="https://share.google/Ubv6K3xra2YsYkQoz" class="boton boton-gmaps" target="_blank">📍 Google Maps</a>
+        <a href="https://waze.com/ul?q=Carrera%20122%20%23%2017%20F%2065%20Bogota" class="boton boton-waze" target="_blank">🚗 Waze</a>
+        <a href="https://wa.me/573184422413?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia" class="boton boton-ws" target="_blank">✅ Confirmar Asistencia</a>
+    </div>
+
+    <script>
+        let indice = 0;
+        const total = 9;
+        const carrusel = document.getElementById('carruselFotos');
+        const contador = document.getElementById('contador');
+
+        function moverCarrusel(paso) {
+            indice += paso;
+            if (indice < 0) indice = total - 1;
+            if (indice >= total) indice = 0;
+            carrusel.style.transform = `translateX(${-indice * 100}%)`;
+            contador.innerText = `${indice + 1} / ${total}`;
+        }
+
+        function crearHumo() {
+            const contenedor = document.getElementById('humo-magico');
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particula-humo';
+                const tx = (Math.random() - 0.5) * 400 + 'px';
+                const ty = (Math.random() - 0.5) * 400 + 'px';
+                const size = Math.random() * 80 + 40 + 'px';
+                p.style.setProperty('--tx', tx);
+                p.style.setProperty('--ty', ty);
+                p.style.width = size;
+                p.style.height = size;
+                p.style.animation = `estallidoHumo ${Math.random() * 1.5 + 1}s ease-out forwards`;
+                contenedor.appendChild(p);
+                setTimeout(() => p.remove(), 2500);
+            }
+        }
+
+        function iniciarApertura() {
+            document.getElementById('musica').play();
+            document.getElementById('tapa-sobre').classList.add('abrir-tapa');
+            document.getElementById('sello-sobre').style.opacity = '0';
+            setTimeout(() => {
+                const p = document.getElementById('pantalla-sobre');
+                p.style.transition = 'opacity 0.8s ease-out';
+                p.style.opacity = '0';
+                crearHumo();
+                setTimeout(() => {
+                    p.style.display = 'none';
+                    const card = document.getElementById('invitacion-card');
+                    card.style.display = 'block';
+                    document.body.style.overflow = 'auto';
+                    setTimeout(() => { card.classList.add('visible'); }, 100);
+                }, 800);
+            }, 700);
+        }
+    </script>
+</body>
+</html>
