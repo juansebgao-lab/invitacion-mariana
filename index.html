@@ -41,7 +41,7 @@
             position: absolute; top: 0; left: 0; width: 0; height: 0;
             border-left: 150px solid transparent; border-right: 150px solid transparent;
             border-top: 120px solid #4527a0; transform-origin: top;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3;
         }
 
         .sello {
@@ -82,7 +82,7 @@
             width: 90%; max-width: 480px; padding: 40px 25px; border-radius: 30px;
             text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             border: 4px double #ffca28; opacity: 0; transform: translateY(40px);
-            transition: all 1.5s ease; margin: auto; backdrop-filter: blur(5px);
+            transition: all 1.2s ease; margin: auto; backdrop-filter: blur(5px);
         }
 
         .invitacion.visible { display: block; opacity: 1; transform: translateY(0); }
@@ -275,9 +275,9 @@
                 p.style.setProperty('--ty', ty);
                 p.style.width = size;
                 p.style.height = size;
-                p.style.animation = `estallidoHumo ${Math.random() * 3.5 + 2.5}s ease-out forwards`;
+                p.style.animation = `estallidoHumo ${Math.random() * 0.8 + 0.5}s ease-out forwards`;
                 contenedor.appendChild(p);
-                setTimeout(() => p.remove(), 6000); 
+                setTimeout(() => p.remove(), 1500); 
             }
         }
 
@@ -285,19 +285,21 @@
             document.getElementById('musica').play();
             document.getElementById('tapa-sobre').classList.add('abrir-tapa');
             document.getElementById('sello-sobre').style.opacity = '0';
+            
             setTimeout(() => {
                 const p = document.getElementById('pantalla-sobre');
-                p.style.transition = 'opacity 1.2s ease-out';
+                p.style.transition = 'opacity 0.3s ease-out'; // Desvanecimiento muy rápido
                 p.style.opacity = '0';
                 crearHumo();
+                
                 setTimeout(() => {
                     p.style.display = 'none';
                     const card = document.getElementById('invitacion-card');
                     card.style.display = 'block';
                     document.body.style.overflow = 'auto';
-                    setTimeout(() => { card.classList.add('visible'); }, 100);
-                }, 1200);
-            }, 700);
+                    setTimeout(() => { card.classList.add('visible'); }, 20);
+                }, 300); // Aparece casi de inmediato tras el humo
+            }, 400); // Apertura de tapa más rápida
         }
 
         const fechaEvento = new Date('May 23, 2026 19:00:00').getTime();
